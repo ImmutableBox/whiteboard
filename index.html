@@ -1,12 +1,75 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="uft-8">
-		<title>My Web Page</title>
+		<meta charset="utf-8">
+		<title>Whiteboard</title>
+		
+		<!--Links-->
+		<link rel="stylesheet" href="https://assets.ubuntu.com/v1/vanilla-framework-version-2.3.0.min.css"/>
 	</head>
 	
 	<body>
-		<!-- Comment -->
-		<h1>Hello World!</h1>
+		<!-- Whiteboard -->
+		<fieldset>
+			<h1 align="center">WHITEBOARD</h1>
+			<div contenteditable="true" id="whiteboard" type ="text"></div>
+			<b>The whiteboard autosaves every two seconds.</b>
+			<br>
+			<b>Press CTRL+s to save. </b>
+		</fieldset>
+		
+		<!--Background image-->
+		 <img src="classroom.png"/> 
+		 
+		<!--Scripts-->
+		<script src="https://unpkg.com/filer/dist/filer.min.js"></script>
+		<script src="https://unpkg.com/hotkeys-js/dist/hotkeys.min.js"></script>
+		<script>
+			//Initializing Filer File System object
+			const fs = new Filer.FileSystem();
+			
+			//Saving the whiteboard text
+			function saveWhiteboard(){
+				fs.writeFile('/note', document.querySelector('#whiteboard').innerHTML,(err)=>{
+					if(err){
+						return console.log(err);
+					}
+				});
+			}
+			//Reading to see if there is previous whiteboard text
+			window.addEventListener('DOMContentLoaded', (event)=> {
+				console.log('DOM fully loaded and parsed');
+				fs.readFile('/note', 'uft8', function(err, data){
+					if(err){ 
+						document.querySelector('#whiteboard').innerHTML = "Write what you want on this whiteboard!";
+					}
+					else{
+						if(data){
+							document.querySelector('#whiteboard').innerHTML = data;
+						}
+					}
+				});
+			});
+			
+			//Auto saving the whiteboard every two seconds
+			window.setInterval(function(){
+				saveWhiteboard()
+			}, 2000);
+			
+			//Using Hotkeys.js to shortcut save whiteboard text
+			hotkeys.filter = function(event) {
+			  var tagName = (event.target || event.srcElement).tagName;
+			  return !(tagName.isContentEditable || tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+			}
+			
+			hotkeys('ctrl+s', function(event, handler){
+				event.preventDefault();
+				saveWhiteboard();
+				window.alert("Saved!");
+			});
+			
+
+		</script>
 	</body>
+
 </html>
