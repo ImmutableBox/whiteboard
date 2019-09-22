@@ -19,6 +19,8 @@
 			<b>The whiteboard autosaves every two seconds.</b>
 			<br>
 			<b>Press CTRL+s to save.</b>
+			<b>Press CTRL+e to encrypt.</b>
+			<b>Press CTRL+d to decrypt.</b>
 			<br>
 			<b>(Click on image for image source)</b>
 		</fieldset>
@@ -31,10 +33,20 @@
 		<!--Scripts-->
 		<script src="https://unpkg.com/filer/dist/filer.min.js"></script>
 		<script src="https://unpkg.com/hotkeys-js/dist/hotkeys.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+
 		<script>
 			//Initializing Filer File System object
 			const fs = new Filer.FileSystem();
-			
+			//Encrypt and replace text
+			function encrypt() {
+				document.querySelector('#whiteboard').innerHTML = CryptoJS.AES.encrypt(document.querySelector('#whiteboard').innerHTML, "PaulPass").toString(); 
+			}
+			//Decrypt and replace text
+			function decrypt() {
+				document.querySelector('#whiteboard').innerHTML = CryptoJS.AES.decrypt(document.querySelector('#whiteboard').innerHTML, "PaulPass").toString((CryptoJS.enc.Utf8)); 
+			}
+
 			//Saving the whiteboard text
 			function saveWhiteboard(){
 				fs.writeFile('/note', document.querySelector('#whiteboard').innerHTML,(err)=>{
@@ -58,6 +70,8 @@
 				});
 			});
 			
+
+			
 			//Auto saving the whiteboard every two seconds
 			window.setInterval(function(){
 				saveWhiteboard()
@@ -74,9 +88,20 @@
 				saveWhiteboard();
 				window.alert("Saved!");
 			});
+
+			hotkeys('ctrl+e', function(event, handler){
+				event.preventDefault();
+				encrypt();
+			});
+
+			hotkeys('ctrl+d', function(event, handler){
+				event.preventDefault();
+				decrypt();
+			});
 			
 
 		</script>
 	</body>
 
 </html>
+
