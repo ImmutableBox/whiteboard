@@ -1,5 +1,5 @@
 # whiteboard
-A web based note taking app  
+A web based note taking app, created for OSD600.
 
 ---
 # Application: https://immutablebox.github.io/whiteboard/   
